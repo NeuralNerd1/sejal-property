@@ -4,17 +4,30 @@
 ## 1. Summary
 The site is a fast, static, mobile-friendly single-listing website. Everything a search engine needs (text, headings, photos, address, price, FAQs) sits in plain HTML and is described again as structured data. This report lists what is **implemented in the code today**, why each item matters, and what still has to be done by the owner after the site goes live (Section 9). SEO cannot guarantee a ranking. Section 2 explains what to realistically expect.
 
-## 2. Goal and realistic expectations
-The aim is to be found by buyers searching for a flat in this exact area and size.
+## 2. Goal, expectations and keyword map
+The aim is to be found by buyers searching for a flat in this exact area and size, and by buyers researching how to buy in Surat.
 
-Broad terms such as "property in Surat" are dominated by large portals (99acres, MagicBricks, Housing.com, NoBroker). A new single-listing site will not hold the first position for those. The site is therefore built to win **specific searches**, and to rank first for its own name and address.
+Broad terms such as "flat in Surat" are dominated by large portals (99acres, MagicBricks, Housing.com, NoBroker) with thousands of listings and years of links. A new single-listing site will not hold the first position for those. The site is therefore built to win **specific and informational searches**, and to rank first for its own name and address. Ranking takes weeks and depends on the off-site steps in the Launch Guide.
 
-| Priority | Example searches | Where they are targeted |
+### What is deliberately not done
+- **No "rent" pages and no pages for other cities.** The flat is for sale in one place. Mass-producing near-identical pages for many cities or for "rent" is called doorway spam; Google penalises it and it can demote the whole site. It would also bring visitors the flat cannot serve.
+- **No keyword stuffing, hidden text or fake reviews.**
+
+### Keyword map (search intent → page)
+| Cluster | Example searches | Target page |
 |---|---|---|
-| Primary | 3 BHK flat for sale in City Light Surat · furnished flat for sale Athwa Surat · Sejal Apartment City Light | Home page title, H1, description, body text, FAQ, structured data |
-| Secondary | flat for sale in Surat · buy 3 BHK in Surat · top floor flat Athwa · ready to move flat Surat | Home page text and guides |
-| Informational | documents to buy a flat in Surat · property registration Surat Gujarat · City Light Surat area guide | The five buyer guides |
-| Rent and other cities | Not targeted on purpose. The flat is for sale only. Ranking for "rent" would bring the wrong visitors. | The FAQ states it is for sale |
+| Exact listing | Sejal Apartment City Light Surat · Sejal Apartment Athwa · Maharishi Dadhichi Road flat | Home (address, schema, map) |
+| Listing, local | 3 BHK flat for sale City Light Surat · furnished 3 BHK Athwa Surat · top floor flat Athwa · 1500 sq ft flat Surat | Home (title, H1, text, FAQ) |
+| Listing, broad | flat for sale in Surat · buy 3 BHK in Surat · ready to move flat Surat · resale flat Surat | Home + guides |
+| Hindi | सूरत में फ्लैट बिक्री के लिए · अठवा सूरत 3 BHK फ्लैट · सिटी लाइट सूरत फ्लैट | `/hi/` |
+| Gujarati | સુરતમાં ફ્લેટ વેચાણ માટે · અઠવા સુરત 3 BHK ફ્લેટ · સિટી લાઇટ સુરત ફ્લેટ | `/gu/` |
+| Area | flat for sale in Athwa Surat · City Light Surat area · best area to buy flat in Surat · Vesu vs Athwa vs Adajan | Guides: Athwa, City Light, choose a locality |
+| Price | 3 BHK flat price in Surat · price per sq ft Surat · jantri value Surat | Guide: how to judge a fair price |
+| Size and terms | carpet area vs super built-up area · what is 3 BHK · 1500 sq ft in carpet area | Guide: carpet area explained |
+| Buying process | documents to buy a flat in Surat · property registration Surat · stamp duty Gujarat · sale deed Surat | Guides: documents checklist, registration |
+| Finance | home loan for resale flat Surat · documents for home loan · down payment | Guide: home loan |
+| Buyer type | NRI buy property in Surat · buy flat in Gujarat from abroad | Guide: NRIs |
+| Property type | furnished vs unfurnished flat · top floor flat pros and cons · ready to move vs under construction Surat | Guides: furnished, top floor, ready vs under construction |
 
 ## 3. On-page SEO (implemented)
 | Item | What was done | Why it matters |
@@ -30,7 +43,7 @@ Broad terms such as "property in Surat" are dominated by large portals (99acres,
 | Image file names | Descriptive and keyword-based, e.g. `kitchen-citylight-surat-1200.webp`. | A small image-search signal. |
 | Internal links | Home links to guides; each guide links to related guides and back to the listing with a button; the footer links everywhere. | Spreads ranking value and helps crawlers find every page. |
 | Contact links | Phone `tel:`, WhatsApp link (number shown on the button and below it), email link. | Conversion and a consistent name-address-phone signal. |
-| Language | `lang="en-IN"` on every page, `og:locale en_IN`. | Tells search engines this is English for India. |
+| Language | `lang="en-IN"` on English pages, `hi` and `gu` on the translated pages, plus `hreflang` links between all three. | Shows the right language version to each searcher and avoids duplicate-content confusion. |
 
 ## 4. Local SEO (implemented)
 - **Full address in text and schema:** Sejal Apartment, 16 Maharishi Dadhichi Road, City Light Town, Athwa, Surat, Gujarat 395007.
@@ -54,7 +67,7 @@ Structured data is a machine-readable summary placed in the page. It helps searc
 - **Plain HTML:** all text is in the page source. Nothing depends on JavaScript to be read or indexed. The only script is a small optional photo viewer.
 - **Canonical URLs:** every page declares its own canonical address on `https://property.kshiti.io`, which prevents duplicate-URL issues.
 - **Robots meta:** `index, follow, max-image-preview:large` (allows big image previews in results). The 404 page is set to `noindex`.
-- **sitemap.xml:** lists the home page, the guides index and the five guides with last-modified dates. The home entry also lists every photo with a caption (helps Google Images).
+- **sitemap.xml:** lists the home page, the Hindi and Gujarati pages, the guides index and all thirteen guides, with last-modified dates and language alternates. The home entry also lists every photo with a caption (helps Google Images).
 - **robots.txt:** allows all crawlers and points to the sitemap.
 - **Social sharing tags:** Open Graph and Twitter Card with a 1200×630 preview image, so WhatsApp, Facebook and X show a proper preview when the link is shared.
 - **Image performance:** photos converted to WebP at 600 px and 1200 px with `srcset`/`sizes` (roughly 25–110 KB each, about 1.4 MB for the whole site). The hero photo is preloaded with high priority; the rest load lazily. Width and height are set on images so the page does not jump while loading.
@@ -64,32 +77,40 @@ Structured data is a machine-readable summary placed in the page. It helps searc
 - **Caching and security headers:** `_headers` file for Netlify/Cloudflare Pages (long caching for assets, `nosniff`, referrer policy).
 - **Clean URLs:** lowercase, hyphenated, with a trailing slash, e.g. `/guides/citylight-surat-area-guide/`.
 
-## 7. Content: buyer guides (implemented)
-Five real, readable pages in `/guides/`, linked from the footer and the guides index. They exist to rank for informational searches and to bring buyers to the listing.
+## 7. Content: buyer guides and language pages (implemented)
+**Thirteen real, readable guides** in `/guides/`, linked from the footer, the guides index and a "Buyer guides" section on the home page. Each guide also shows four related guides and a button to the listing, so ranking value flows to the listing.
 1. 3 BHK Flat for Sale in Citylight, Surat – What to Expect
-2. Buying a Flat in Surat – Documents Checklist
-3. Property Registration Process in Surat, Gujarat – Step by Step
-4. Buying a Furnished Flat in Surat – What to Check
-5. Citylight, Surat – Area Guide for Home Buyers
+2. Flat for Sale in Athwa, Surat – Buyer's Guide
+3. Citylight, Surat – Area Guide for Home Buyers
+4. How to Choose a Locality to Buy a Flat in Surat
+5. 3 BHK Flat Price in Surat – How to Judge a Fair Price
+6. Carpet Area vs Super Built-Up Area Explained
+7. Buying a Flat in Surat – Documents Checklist
+8. Property Registration Process in Surat, Gujarat – Step by Step
+9. Home Loan for a Resale Flat in Surat – Step by Step
+10. Buying Property in Surat as an NRI – What to Know
+11. Buying a Furnished Flat in Surat – What to Check
+12. Top-Floor Flat – Pros and Cons Before You Buy
+13. Ready-to-Move vs Under-Construction Flat in Surat
 
-**Not hidden:** the guides are visible to visitors. Showing text only to search engines is called cloaking, and Google penalises sites that do it, so it was deliberately avoided. The guides contain general information only (no invented statistics or rates) and tell readers to verify current rules.
+**Hindi (`/hi/`) and Gujarati (`/gu/`) pages:** short, genuine translations of the listing (facts, furnishing, amenities, address, FAQ, contact). They have their own title, description and `lang` attribute, are linked from the footer, and are connected to the English page with `hreflang` tags (in the page head and in the sitemap) so Google shows the right language to each searcher. **Please have a native speaker read the Hindi and Gujarati text once.**
+
+**Not hidden:** all guides are visible to visitors. Showing text only to search engines is cloaking, which Google penalises. Guides contain general information only (no invented statistics or rates) and tell readers to verify current rules.
 
 ## 8. How the site is generated
 `node build.mjs` produces all pages, the sitemap, `robots.txt` and the headers file from `config.json` and the guide files. Because of this, the title tags, schema and sitemap always match the data in one place. Changing the price or domain and rebuilding updates everything at once.
 
 ## 9. Still to do after the site goes live (owner)
-These matter more for ranking than any further code change.
-1. **Deploy and enable HTTPS** on property.kshiti.io, then point the DNS at the host.
-2. **Google Search Console:** add the site, verify it, submit `https://property.kshiti.io/sitemap.xml`, and use *URL Inspection → Request indexing* on the home page and each guide.
-3. **Bing Webmaster Tools:** import from Search Console (also covers Yahoo and DuckDuckGo).
-4. **Test the structured data** at search.google.com/test/rich-results and validator.schema.org.
-5. **List the flat on 99acres, MagicBricks, Housing.com, NoBroker and OLX**, with the same phone number and a link to this website. Links from these sites are the biggest ranking boost for a new domain.
-6. **Share the link** in WhatsApp groups, Facebook Marketplace and local Surat property groups.
-7. **Set the price** in `config.json` so it appears on the page and in the structured data.
-8. **Check results after 2–4 weeks** in Search Console (Pages and Performance reports).
+These matter more for ranking than any further code change. **Full click-by-click instructions are in `docs/Launch-Guide.pdf` (source: `docs/Launch-Guide.md`).** In short:
+1. Deploy and connect the domain with HTTPS (done once `property.kshiti.io` loads).
+2. Verify the site in Google Search Console, submit the sitemap and request indexing for the key pages.
+3. Do the same in Bing Webmaster Tools.
+4. List the flat on the property portals with a link to the website; share it in local groups.
+5. Set the price in `config.json`.
+6. Check Search Console weekly and add one new guide every two weeks.
 
 ## 10. Later improvements (optional)
-- Hindi and Gujarati versions with `hreflang` tags.
+- Translated guides (Hindi and Gujarati) for the most popular articles.
 - A short video walkthrough (video schema).
 - A floor plan and a building exterior photo.
 - New FAQ entries based on real buyer questions.

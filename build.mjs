@@ -36,11 +36,11 @@ const GALLERY = [
 ];
 
 // ---------- shared layout ----------
-const contactLinks = (cls = '') => {
+const contactLinks = (cls = '', L = { call: 'Call', email: 'Email' }) => {
   const out = [];
   if (cfg.whatsapp || cfg.phone) out.push(`<a class="btn ${cls}" href="https://wa.me/${digits(cfg.whatsapp || cfg.phone)}?text=${encodeURIComponent('Hi, I am interested in the 3 BHK flat at Sejal Apartment, City Light, Athwa, Surat.')}" rel="noopener">WhatsApp ${esc(cfg.whatsapp || cfg.phone)}</a>`);
-  if (cfg.phone) out.push(`<a class="btn ghost ${cls}" href="tel:${esc(cfg.phone)}">Call ${esc(cfg.phone)}</a>`);
-  if (cfg.email) out.push(`<a class="btn ghost ${cls}" href="mailto:${esc(cfg.email)}?subject=${encodeURIComponent('Enquiry: 3 BHK flat, Citylight, Surat')}">Email</a>`);
+  if (cfg.phone) out.push(`<a class="btn ghost ${cls}" href="tel:${esc(cfg.phone)}">${L.call} ${esc(cfg.phone)}</a>`);
+  if (cfg.email) out.push(`<a class="btn ghost ${cls}" href="mailto:${esc(cfg.email)}?subject=${encodeURIComponent('Enquiry: 3 BHK flat, Citylight, Surat')}">${L.email}</a>`);
   return out.join('\n') || '<span class="muted">Contact details coming soon.</span>';
 };
 
@@ -69,21 +69,23 @@ function md(src) {
 
 const footer = () => `<footer><div class="wrap">
   <div>© ${new Date().getFullYear()} ${esc(HOST)} · All rights reserved.<br>3 BHK flat for sale, Sejal Apartment, City Light, Athwa, Surat, Gujarat${cfg.ownerName ? ' · Listed by ' + esc(cfg.ownerName) : ''}.<br>Listing details are provided by the owner and are subject to verification.</div>
-  <nav aria-label="Footer"><a href="/">Home</a><a href="/#gallery">Photos</a><a href="/#faq">FAQ</a><a href="/guides/">Buyer guides</a></nav>
+  <nav aria-label="Footer"><a href="/">Home</a><a href="/#gallery">Photos</a><a href="/#faq">FAQ</a><a href="/guides/">Buyer guides</a><a href="/hi/" hreflang="hi" lang="hi">हिन्दी</a><a href="/gu/" hreflang="gu" lang="gu">ગુજરાતી</a></nav>
 </div></footer>`;
 
-function page({ title, description, canonicalPath, body, head = '', schema = [], ogImage = `${DOMAIN}/assets/img/og-citylight-surat-3bhk.jpg`, plainHeader = false, ogType = 'website', script = false }) {
+function page({ title, description, canonicalPath, body, head = '', schema = [], ogImage = `${DOMAIN}/assets/img/og-citylight-surat-3bhk.jpg`, plainHeader = false, ogType = 'website', script = false, lang = 'en-IN', alternates = [] }) {
   const url = DOMAIN + canonicalPath;
   return `<!doctype html>
-<html lang="en-IN">
+<html lang="${lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${url}">
+${alternates.map(a => `<link rel="alternate" hreflang="${a.lang}" href="${DOMAIN}${a.path}">`).join('\n')}
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta name="theme-color" content="#8a5a2b">
+${cfg.googleSiteVerification ? `<meta name="google-site-verification" content="${esc(cfg.googleSiteVerification)}">` : ''}${cfg.bingSiteVerification ? `<meta name="msvalidate.01" content="${esc(cfg.bingSiteVerification)}">` : ''}
 <meta name="geo.region" content="IN-GJ"><meta name="geo.placename" content="Citylight, Surat"><meta name="geo.position" content="${cfg.lat};${cfg.lng}"><meta name="ICBM" content="${cfg.lat}, ${cfg.lng}">
 <meta property="og:type" content="${ogType}"><meta property="og:site_name" content="${HOST}"><meta property="og:locale" content="en_IN">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}">
@@ -135,6 +137,7 @@ const listingSchema = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) };
 const siteSchema = { '@context': 'https://schema.org', '@type': 'WebSite', name: HOST, url: DOMAIN + '/', inLanguage: 'en-IN' };
 
+const ALTS = [{ lang: 'en-IN', path: '/' }, { lang: 'hi', path: '/hi/' }, { lang: 'gu', path: '/gu/' }, { lang: 'x-default', path: '/' }];
 const fact = (v, l) => `<div><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
 const amen = ['Lift', 'Security guard', 'CCTV surveillance', 'Visitor parking', 'Children’s play area', 'Park'];
 const nav = `<header class="site"><div class="wrap"><a class="brand" href="/">City Light, Surat</a>
@@ -143,6 +146,7 @@ const home = page({
   title: '3 BHK Furnished Flat for Sale in City Light, Athwa, Surat',
   description: `Furnished 3 BHK flat for sale in City Light, Athwa, Surat – ${cfg.areaSqft} sq ft, top floor, 2 bathrooms, AC. Sejal Apartment. See photos, contact owner.`,
   canonicalPath: '/',
+  alternates: ALTS,
   head: `<link rel="preload" as="image" type="image/webp" imagesrcset="${HERO.s} 600w, ${HERO.l} 1200w" imagesizes="(max-width:900px) 100vw, 520px" fetchpriority="high">`,
   schema: [listingSchema, faqSchema, siteSchema], script: true,
   body: `${nav}
@@ -204,6 +208,10 @@ const home = page({
   </div>
 </div></section>
 
+<section id="guides" class="alt"><div class="wrap" style="max-width:760px"><p class="eyebrow">Buyer guides</p>
+  <details class="guides-toggle"><summary>Show guides: helpful reading before you buy</summary>
+  <ul class="tick">${guides.map(g => `<li><a href="/guides/${g.slug}/">${esc(g.title)}</a></li>`).join('')}</ul></details></div></section>
+
 <section id="faq"><div class="wrap" style="max-width:760px"><p class="eyebrow">FAQ</p><h2>Questions buyers ask</h2>
   ${faqs.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${a}</p></details>`).join('\n  ')}
 </div></section>
@@ -237,7 +245,63 @@ const guidePages = guides.map(g => ({
     ],
     body: `${nav}
 <main><article><p class="crumbs"><a href="/">Home</a> › <a href="/guides/">Buyer guides</a></p><h1>${esc(g.title)}</h1><p class="muted">Updated ${esc(g.date)}</p>${g.body}
+<h2>More guides</h2><ul>${[1, 2, 3, 4].map(k => guides[(guides.indexOf(g) + k) % guides.length]).map(r => `<li><a href="/guides/${r.slug}/">${esc(r.title)}</a></li>`).join('')}</ul>
 <div class="guide-cta"><h3>3 BHK furnished flat for sale in Citylight, Surat</h3><p class="muted">Fully furnished, 2 bathrooms, main city area.</p><a class="btn" href="/">View the flat</a></div></article></main>${footer()}`,
+  }),
+}));
+
+// ---------- Hindi / Gujarati landing pages ----------
+const L10N = {
+  hi: {
+    name: 'हिन्दी', title: 'सूरत के सिटी लाइट, अठवा में 3 BHK फर्निश्ड फ्लैट बिक्री के लिए',
+    description: `सूरत के सिटी लाइट, अठवा में सेजल अपार्टमेंट में ${cfg.areaSqft} sq ft का 3 BHK फर्निश्ड फ्लैट बिक्री के लिए – टॉप फ्लोर, 2 बाथरूम, AC। फोटो देखें, मालिक से संपर्क करें।`,
+    h1: 'सूरत के सिटी लाइट (अठवा) में 3 BHK फर्निश्ड फ्लैट बिक्री के लिए',
+    lead: `सेजल अपार्टमेंट, सिटी लाइट, अठवा, सूरत में टॉप फ्लोर पर लगभग ${cfg.areaSqft} sq ft का 3 BHK फ्लैट। तीन तरफ खुला, हवादार और भरपूर रोशनी वाला। 3 बेडरूम, 2 बाथरूम, फर्निश्ड – तुरंत बिक्री के लिए उपलब्ध।`,
+    badges: ['बिक्री के लिए', 'फर्निश्ड', 'टॉप फ्लोर'], facts: [['3 BHK', 'बेडरूम'], ['2', 'बाथरूम'], [`${cfg.areaSqft} sq ft`, 'क्षेत्रफल'], ['टॉप फ्लोर', 'मंज़िल'], ['फर्निश्ड', 'फर्निशिंग']],
+    furnTitle: 'फर्निशिंग', furn: ['बेड और वार्डरोब', 'सोफा और डाइनिंग टेबल', 'एयर कंडीशनर', 'पंखे और लाइट', 'गीज़र और स्टोव', 'वाटर प्यूरीफायर'],
+    amenTitle: 'बिल्डिंग की सुविधाएँ', amen: ['लिफ्ट', 'सिक्योरिटी गार्ड', 'CCTV निगरानी', 'विज़िटर पार्किंग', 'बच्चों का खेल क्षेत्र', 'पार्क'],
+    addrTitle: 'पता', faqTitle: 'अक्सर पूछे जाने वाले प्रश्न', contactTitle: 'देखने के लिए संपर्क करें', contactText: 'कीमत, दस्तावेज़ और विज़िट के लिए मालिक से संपर्क करें।',
+    waNote: 'कृपया WhatsApp पर इसी नंबर पर संपर्क करें:', call: 'कॉल करें', email: 'ईमेल', more: 'सभी फोटो और पूरी जानकारी देखें (English)',
+    faq: [['फ्लैट कहाँ है?', `${addr}`], ['क्या यह बिक्री के लिए है या किराये के लिए?', 'यह फ्लैट केवल बिक्री के लिए है और तुरंत उपलब्ध है।'], ['क्या फ्लैट फर्निश्ड है?', 'हाँ। बेड, वार्डरोब, सोफा, डाइनिंग टेबल, पंखे, लाइट, गीज़र, स्टोव, वाटर प्यूरीफायर और AC। अंतिम सामान लिखित में तय होगा।'], ['कीमत क्या है?', 'कीमत के लिए कृपया मालिक से संपर्क करें।'], ['फ्लैट देखने कैसे आएँ?', `फोन या WhatsApp पर ${cfg.phone} पर संपर्क करें।`]],
+  },
+  gu: {
+    name: 'ગુજરાતી', title: 'સુરતના સિટી લાઇટ, અઠવામાં 3 BHK ફર્નિશ્ડ ફ્લેટ વેચાણ માટે',
+    description: `સુરતના સિટી લાઇટ, અઠવામાં સેજલ એપાર્ટમેન્ટમાં ${cfg.areaSqft} sq ft નો 3 BHK ફર્નિશ્ડ ફ્લેટ વેચાણ માટે – ટોપ ફ્લોર, 2 બાથરૂમ, AC. ફોટા જુઓ, માલિકનો સંપર્ક કરો.`,
+    h1: 'સુરતના સિટી લાઇટ (અઠવા)માં 3 BHK ફર્નિશ્ડ ફ્લેટ વેચાણ માટે',
+    lead: `સેજલ એપાર્ટમેન્ટ, સિટી લાઇટ, અઠવા, સુરતમાં ટોપ ફ્લોર પર આશરે ${cfg.areaSqft} sq ft નો 3 BHK ફ્લેટ. ત્રણ બાજુ ખુલ્લો, હવાઉજાસવાળો અને દિવસભર પ્રકાશવાળો. 3 બેડરૂમ, 2 બાથરૂમ, ફર્નિશ્ડ – તરત વેચાણ માટે ઉપલબ્ધ.`,
+    badges: ['વેચાણ માટે', 'ફર્નિશ્ડ', 'ટોપ ફ્લોર'], facts: [['3 BHK', 'બેડરૂમ'], ['2', 'બાથરૂમ'], [`${cfg.areaSqft} sq ft`, 'ક્ષેત્રફળ'], ['ટોપ ફ્લોર', 'માળ'], ['ફર્નિશ્ડ', 'ફર્નિશિંગ']],
+    furnTitle: 'ફર્નિશિંગ', furn: ['બેડ અને વોર્ડરોબ', 'સોફા અને ડાઇનિંગ ટેબલ', 'એર કન્ડિશનર', 'પંખા અને લાઇટ', 'ગીઝર અને સ્ટવ', 'વોટર પ્યુરિફાયર'],
+    amenTitle: 'બિલ્ડિંગની સુવિધાઓ', amen: ['લિફ્ટ', 'સિક્યોરિટી ગાર્ડ', 'CCTV સર્વેલન્સ', 'વિઝિટર પાર્કિંગ', 'બાળકો માટે રમતનું સ્થળ', 'પાર્ક'],
+    addrTitle: 'સરનામું', faqTitle: 'વારંવાર પૂછાતા પ્રશ્નો', contactTitle: 'જોવા માટે સંપર્ક કરો', contactText: 'કિંમત, દસ્તાવેજો અને મુલાકાત માટે માલિકનો સંપર્ક કરો.',
+    waNote: 'કૃપા કરીને WhatsApp પર આ જ નંબર પર સંપર્ક કરો:', call: 'કૉલ કરો', email: 'ઇમેઇલ', more: 'બધા ફોટા અને સંપૂર્ણ માહિતી જુઓ (English)',
+    faq: [['ફ્લેટ ક્યાં આવેલો છે?', `${addr}`], ['શું તે વેચાણ માટે છે કે ભાડે?', 'આ ફ્લેટ ફક્ત વેચાણ માટે છે અને તરત ઉપલબ્ધ છે.'], ['શું ફ્લેટ ફર્નિશ્ડ છે?', 'હા. બેડ, વોર્ડરોબ, સોફા, ડાઇનિંગ ટેબલ, પંખા, લાઇટ, ગીઝર, સ્ટવ, વોટર પ્યુરિફાયર અને AC. અંતિમ સામાન લેખિતમાં નક્કી થશે.'], ['કિંમત શું છે?', 'કિંમત માટે કૃપા કરીને માલિકનો સંપર્ક કરો.'], ['ફ્લેટ જોવા કેવી રીતે આવવું?', `ફોન અથવા WhatsApp પર ${cfg.phone} પર સંપર્ક કરો.`]],
+  },
+};
+const localPages = Object.entries(L10N).map(([code, t]) => ({
+  code,
+  html: page({
+    title: t.title, description: t.description, canonicalPath: `/${code}/`, lang: code, alternates: ALTS,
+    schema: [{ '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: code, mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }],
+    body: `<header class="site"><div class="wrap"><a class="brand" href="/">City Light, Surat</a>
+<nav aria-label="Primary"><a href="/">English</a><a class="btn sm" href="#contact">${esc(t.call)}</a></nav></div></header>
+<main>
+<section class="hero"><div class="wrap">
+  <div><ul class="badges">${t.badges.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+  <h1>${esc(t.h1)}</h1><p class="lead">${esc(t.lead)}</p>
+  <div class="cta"><a class="btn" href="#contact">${esc(t.call)}</a><a class="btn ghost" href="/#gallery">${esc(t.more)}</a></div></div>
+  <figure class="hero-img"><img src="${HERO.l}" srcset="${HERO.s} 600w, ${HERO.l} 1200w" sizes="(max-width:900px) 100vw, 520px" width="1200" height="1600" alt="${esc(HERO.alt)}" fetchpriority="high"></figure>
+</div></section>
+<section class="alt"><div class="wrap">
+  <div class="facts">${t.facts.map(([v, l]) => fact(v, l)).join('')}</div>
+  <div class="cols" style="margin-top:48px"><div><p class="eyebrow">${esc(t.furnTitle)}</p><ul class="tick">${t.furn.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+  <div><p class="eyebrow">${esc(t.amenTitle)}</p><ul class="chips">${t.amen.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+  <p class="eyebrow" style="margin-top:28px">${esc(t.addrTitle)}</p><address style="font-style:normal">${esc(addr)}</address></div></div>
+</div></section>
+<section><div class="wrap" style="max-width:760px"><h2>${esc(t.faqTitle)}</h2>${t.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div></section>
+<section id="contact" class="contact"><div class="wrap"><h2>${esc(t.contactTitle)}</h2><p class="muted">${esc(t.contactText)}</p>
+<div class="cta">${contactLinks('', { call: t.call, email: t.email })}</div>
+<p class="muted" style="margin-top:14px">${esc(t.waNote)} <strong>${esc(cfg.whatsapp || cfg.phone)}</strong></p></div></section>
+</main>${footer()}`,
   }),
 }));
 
@@ -247,16 +311,17 @@ const write = (p, c) => { const f = path.join(dist, p); fs.mkdirSync(path.dirnam
 write('index.html', home);
 write('guides/index.html', guidesIndex);
 guidePages.forEach(g => write(`guides/${g.slug}/index.html`, g.html));
+localPages.forEach(l => write(`${l.code}/index.html`, l.html));
 write('404.html', page({ title: 'Page not found', description: 'This page could not be found.', canonicalPath: '/404.html', body: `<main><article><h1>Page not found</h1><p><a href="/">Go to the home page</a></p></article></main>${footer()}` }).replace('content="index,follow', 'content="noindex,follow'));
 fs.cpSync(path.join(root, 'assets'), path.join(dist, 'assets'), { recursive: true });
 
-const urls = [['/', 1.0, [HERO, ...GALLERY]], ['/guides/', 0.6, []], ...guides.map(g => [`/guides/${g.slug}/`, 0.7, []])];
+const urls = [['/', 1.0, [HERO, ...GALLERY]], ['/hi/', 0.8, []], ['/gu/', 0.8, []], ['/guides/', 0.6, []], ...guides.map(g => [`/guides/${g.slug}/`, 0.7, []])];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${urls.map(([u, p, imgs]) => `<url><loc>${DOMAIN}${u}</loc><lastmod>${TODAY}</lastmod><priority>${p}</priority>${imgs.map(i => `<image:image><image:loc>${DOMAIN}${i.l}</image:loc><image:caption>${esc(i.alt)}</image:caption></image:image>`).join('')}</url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls.map(([u, p, imgs]) => `<url><loc>${DOMAIN}${u}</loc><lastmod>${TODAY}</lastmod><priority>${p}</priority>${['/', '/hi/', '/gu/'].includes(u) ? ALTS.map(a => `<xhtml:link rel="alternate" hreflang="${a.lang}" href="${DOMAIN}${a.path}"/>`).join('') : ''}${imgs.map(i => `<image:image><image:loc>${DOMAIN}${i.l}</image:loc><image:caption>${esc(i.alt)}</image:caption></image:image>`).join('')}</url>`).join('\n')}
 </urlset>`);
 write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${DOMAIN}/sitemap.xml\n`);
 write('_headers', `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n`);
 
-console.log(`Built ${2 + guidePages.length + 1} pages into dist/`);
+console.log(`Built ${3 + guidePages.length + localPages.length} pages into dist/`);
 warnings.forEach(w => console.warn('⚠ ' + w));
