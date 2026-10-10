@@ -1,0 +1,19 @@
+{
+  "domain": "https://property.kshiti.io",
+  "ownerName": "",
+  "phone": "+91 94261 04316",
+  "whatsapp": "+91 94261 04316",
+  "email": "punjabi.rtp@gmail.com",
+  "price": "",
+  "areaSqft": "1500",
+  "floor": "Top floor",
+  "societyName": "Sejal Apartment",
+  "streetAddress": "16, Maharishi Dadhichi Road",
+  "locality": "City Light Town, Athwa",
+  "postalCode": "395007",
+  "lat": 21.167485,
+  "lng": 72.7936508,
+  "mapLink": "https://www.google.com/maps/dir//Sejal+Appartment,+16,+Maharishi+Dadhichi+Road,+City+Light+Town,+Athwa,+Surat,+Gujarat+395007/@21.167485,72.7936508,17z",
+  "nearby": ["Athwa", "Parle Point", "Vesu", "Surat Railway Station"],
+  "locale": "en-IN"
+}
